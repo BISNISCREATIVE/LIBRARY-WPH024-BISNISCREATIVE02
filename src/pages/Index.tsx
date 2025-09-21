@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
+import { CartSidebar } from '../components/CartSidebar';
 import { HeroSection } from '../components/HeroSection';
 import { CategoryGrid } from '../components/CategoryGrid';
 import { BookCard } from '../components/BookCard';
@@ -89,6 +91,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <CartSidebar />
       
       <main>
         <HeroSection />
@@ -160,10 +163,27 @@ const Index = () => {
               </div>
               <span className="font-bold text-xl">Booky</span>
             </div>
-            <p className="text-sm opacity-90 mb-4">
-              Discover inspiring stories & timeless knowledge, ready to borrow anytime. Explore online or visit our nearest library branch.
+            <p className="text-sm opacity-90 mb-4 max-w-md mx-auto">
+              Discover inspiring stories & timeless knowledge, ready to borrow anytime. 
+              Explore online or visit our nearest library branch.
             </p>
-            <p className="text-xs opacity-75">Follow on Social Media</p>
+            
+            <p className="text-sm font-medium mb-4">Follow on Social Media</p>
+            
+            <div className="flex justify-center space-x-4">
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                <Facebook className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                <Instagram className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                <Linkedin className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                <span className="text-sm font-bold">T</span>
+              </Button>
+            </div>
           </div>
         </footer>
       </main>

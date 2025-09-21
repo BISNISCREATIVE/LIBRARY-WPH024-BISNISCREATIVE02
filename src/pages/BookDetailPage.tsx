@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
 import { Navbar } from '../components/Navbar';
+import { CartSidebar } from '../components/CartSidebar';
 import { useAuth } from '../hooks/useAuth';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/features/cartSlice';
@@ -111,8 +112,9 @@ export const BookDetailPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <CartSidebar />
         <div className="container mx-auto px-4 py-6">
           <div className="animate-pulse">
             <div className="h-8 bg-muted rounded w-32 mb-6"></div>

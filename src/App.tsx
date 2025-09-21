@@ -11,7 +11,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { BooksPage } from "./pages/BooksPage";
 import { BookDetailPage } from "./pages/BookDetailPage";
-import { MyLoansPage } from "./pages/MyLoansPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -36,7 +36,7 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/books" element={<BooksPage />} />
             <Route path="/books/:id" element={<BookDetailPage />} />
-            <Route path="/loans" element={<MyLoansPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

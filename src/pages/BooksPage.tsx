@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
+import { CartSidebar } from '../components/CartSidebar';
 import { BookCard } from '../components/BookCard';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -157,6 +158,7 @@ export const BooksPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <CartSidebar />
       
       <main className="container mx-auto px-4 py-6">
         {/* Header */}
