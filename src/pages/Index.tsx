@@ -73,13 +73,18 @@ const Index = () => {
     queryFn: async () => {
       try {
         const response = await api.get('/api/books?limit=10');
-        return response.data.data || mockBooks;
+        const apiData = response.data?.data;
+        // Ensure we always return an array
+        return Array.isArray(apiData) ? apiData : mockBooks;
       } catch (error) {
         // Fallback to mock data if API is not available
         return mockBooks;
       }
     },
   });
+
+  // Extra safety check to ensure books is always an array
+  const booksArray = Array.isArray(books) ? books : mockBooks;
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,7 +124,7 @@ const Index = () => {
               transition={{ duration: 0.6 }}
               className="grid grid-cols-2 md:grid-cols-5 gap-4"
             >
-              {books.slice(0, 10).map((book) => (
+              {booksArray.slice(0, 10).map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}
             </motion.div>
