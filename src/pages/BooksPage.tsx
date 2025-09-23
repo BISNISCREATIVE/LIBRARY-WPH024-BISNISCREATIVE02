@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CartSidebar } from '../components/CartSidebar';
@@ -10,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { setSearchQuery, setSelectedCategory } from '../store/features/uiSlice';
-import api from '../api/api';
+import api, { generateDummyBooks } from '../api/api';
 
 // Extended mock data for books page
 const mockBooks = [
@@ -116,9 +117,11 @@ export const BooksPage = () => {
   const dispatch = useDispatch();
   const { searchQuery, selectedCategory } = useSelector((state: RootState) => state.ui);
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [page, setPage] = useState(1);
+  const [allBooks, setAllBooks] = useState(() => generateDummyBooks(100));
 
-  const { data: books = mockBooks, isLoading } = useQuery({
-    queryKey: ['books', searchQuery, selectedCategory],
+  const { data: books, isLoading } = useQuery({
+    queryKey: ['books', searchQuery, selectedCategory, page],
     queryFn: async () => {
       try {
         const params = new URLSearchParams();
@@ -126,12 +129,36 @@ export const BooksPage = () => {
         if (selectedCategory && selectedCategory !== 'All Categories') {
           params.append('category', selectedCategory);
         }
+        params.append('page', page.toString());
+        params.append('limit', '20');
         
         const response = await api.get(`/api/books?${params.toString()}`);
-        return response.data.data || mockBooks;
+        const apiData = response.data?.data;
+        if (Array.isArray(apiData) && apiData.length > 0) {
+          return apiData;
+        }
+        
+        // Fallback to filtered dummy data
+        return allBooks.filter(book => {
+          const matchesSearch = !searchQuery || 
+            book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            book.author.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          const matchesCategory = !selectedCategory || 
+            selectedCategory === 'All Categories' ||
+            book.category === selectedCategory;
+            
+          return matchesSearch && matchesCategory;
+        });
       } catch (error) {
-        // Fallback to filtered mock data
-        return mockBooks.filter(book => {
+        // Generate more dummy data if needed
+        if (allBooks.length < page * 20) {
+          const newBooks = generateDummyBooks(50, allBooks.length);
+          setAllBooks(prev => [...prev, ...newBooks]);
+        }
+        
+        // Fallback to filtered dummy data
+        return allBooks.filter(book => {
           const matchesSearch = !searchQuery || 
             book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             book.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -145,6 +172,10 @@ export const BooksPage = () => {
       }
     },
   });
+
+  const handleLoadMore = () => {
+    setPage(prev => prev + 1);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,27 +251,63 @@ export const BooksPage = () => {
         </div>
 
         {/* Books Grid */}
-        {isLoading ? (
+        {isLoading && page === 1 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => (
-              <div key={i} className="animate-pulse">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: i * 0.05 }}
+                className="animate-pulse"
+              >
                 <div className="aspect-[3/4] bg-muted rounded-lg mb-2"></div>
                 <div className="h-4 bg-muted rounded mb-1"></div>
                 <div className="h-3 bg-muted rounded w-3/4"></div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        ) : books.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {books.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </div>
+        ) : books && books.length > 0 ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+            >
+              {books.map((book, index) => (
+                <motion.div
+                  key={book.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <BookCard book={book} />
+                </motion.div>
+              ))}
+            </motion.div>
+            
+            {/* Load More Button */}
+            <div className="flex justify-center mt-8">
+              <Button
+                onClick={handleLoadMore}
+                disabled={isLoading}
+                className="min-w-32"
+              >
+                {isLoading ? 'Loading...' : 'Load More Books'}
+              </Button>
+            </div>
+          </>
         ) : (
-          <div className="text-center py-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-center py-12"
+          >
             <p className="text-muted-foreground text-lg">No books found</p>
             <p className="text-muted-foreground">Try adjusting your search or filters</p>
-          </div>
+          </motion.div>
         )}
       </main>
     </div>

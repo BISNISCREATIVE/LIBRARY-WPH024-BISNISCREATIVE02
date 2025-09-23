@@ -6,6 +6,7 @@ import {
   Atom, 
   Users 
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Card, CardContent } from './ui/card';
 import { useDispatch } from 'react-redux';
 import { setSelectedCategory } from '../store/features/uiSlice';
@@ -56,23 +57,35 @@ export const CategoryGrid = () => {
   return (
     <section className="px-4 md:px-8 mt-8">
       <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-        {categories.map((category) => {
+        {categories.map((category, index) => {
           const IconComponent = category.icon;
           return (
-            <Card
+            <motion.div
               key={category.name}
-              className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
-              onClick={() => handleCategoryClick(category.name)}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <CardContent className="p-4 text-center">
-                <div className={`w-12 h-12 rounded-lg ${category.color} flex items-center justify-center mx-auto mb-2`}>
-                  <IconComponent className="h-6 w-6" />
-                </div>
-                <p className="text-sm font-medium text-center leading-tight">
-                  {category.name}
-                </p>
-              </CardContent>
-            </Card>
+              <Card
+                className="cursor-pointer transition-all duration-200 hover:shadow-lg"
+                onClick={() => handleCategoryClick(category.name)}
+              >
+                <CardContent className="p-4 text-center">
+                  <motion.div 
+                    className={`w-12 h-12 rounded-lg ${category.color} flex items-center justify-center mx-auto mb-2`}
+                    whileHover={{ rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <IconComponent className="h-6 w-6" />
+                  </motion.div>
+                  <p className="text-sm font-medium text-center leading-tight">
+                    {category.name}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
       </div>

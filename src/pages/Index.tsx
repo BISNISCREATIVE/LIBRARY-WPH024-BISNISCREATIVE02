@@ -8,7 +8,8 @@ import { CategoryGrid } from '../components/CategoryGrid';
 import { BookCard } from '../components/BookCard';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/api';
+import api, { generateDummyBooks, generateDummyAuthors } from '../api/api';
+import { useState } from 'react';
 
 // Mock data for development
 const mockBooks = [
@@ -59,34 +60,50 @@ const mockBooks = [
   },
 ];
 
-const mockAuthors = [
-  { id: '1', name: 'Author name', books: 5, avatar: '/placeholder-avatar.png' },
-  { id: '2', name: 'Author name', books: 5, avatar: '/placeholder-avatar.png' },
-  { id: '3', name: 'Author name', books: 5, avatar: '/placeholder-avatar.png' },
-  { id: '4', name: 'Author name', books: 5, avatar: '/placeholder-avatar.png' },
-];
-
 const Index = () => {
   const navigate = useNavigate();
+  const [loadedBooks, setLoadedBooks] = useState(10);
+  const [allBooks, setAllBooks] = useState(() => generateDummyBooks(50));
+  const [authors] = useState(() => generateDummyAuthors(8));
 
-  // In a real app, this would fetch from the API
-  const { data: books = mockBooks, isLoading } = useQuery({
-    queryKey: ['recommended-books'],
+  // Fetch books from API with fallback to dummy data
+  const { data: books, isLoading } = useQuery({
+    queryKey: ['recommended-books', loadedBooks],
     queryFn: async () => {
       try {
-        const response = await api.get('/api/books?limit=10');
+        const response = await api.get(`/api/books?limit=${loadedBooks}`);
         const apiData = response.data?.data;
-        // Ensure we always return an array
-        return Array.isArray(apiData) ? apiData : mockBooks;
+        if (Array.isArray(apiData) && apiData.length > 0) {
+          return apiData;
+        }
+        // Fallback to dummy data
+        return allBooks.slice(0, loadedBooks);
       } catch (error) {
-        // Fallback to mock data if API is not available
-        return mockBooks;
+        // Generate more dummy data if needed
+        if (loadedBooks > allBooks.length) {
+          const newBooks = generateDummyBooks(loadedBooks - allBooks.length, allBooks.length);
+          const updatedBooks = [...allBooks, ...newBooks];
+          setAllBooks(updatedBooks);
+          return updatedBooks.slice(0, loadedBooks);
+        }
+        return allBooks.slice(0, loadedBooks);
       }
     },
   });
 
+  const handleLoadMore = () => {
+    const newCount = loadedBooks + 10;
+    setLoadedBooks(newCount);
+    
+    // Generate more dummy data if needed
+    if (newCount > allBooks.length) {
+      const additionalBooks = generateDummyBooks(20, allBooks.length);
+      setAllBooks(prev => [...prev, ...additionalBooks]);
+    }
+  };
+
   // Extra safety check to ensure books is always an array
-  const booksArray = Array.isArray(books) ? books : mockBooks;
+  const booksArray = Array.isArray(books) ? books : allBooks.slice(0, loadedBooks);
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,10 +120,11 @@ const Index = () => {
             <h2 className="text-2xl font-bold">Recommendation</h2>
             <Button 
               variant="ghost" 
-              onClick={() => navigate('/books')}
+              onClick={handleLoadMore}
               className="text-primary hover:text-primary/80"
+              disabled={isLoading}
             >
-              Load More
+              {isLoading ? 'Loading...' : 'Load More'}
             </Button>
           </div>
 
@@ -127,8 +145,15 @@ const Index = () => {
               transition={{ duration: 0.6 }}
               className="grid grid-cols-2 md:grid-cols-5 gap-4"
             >
-              {booksArray.slice(0, 10).map((book) => (
-                <BookCard key={book.id} book={book} />
+              {booksArray.map((book, index) => (
+                <motion.div
+                  key={book.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <BookCard book={book} />
+                </motion.div>
               ))}
             </motion.div>
           )}
@@ -138,10 +163,16 @@ const Index = () => {
         <section className="px-4 md:px-8 mt-12 mb-16">
           <h2 className="text-2xl font-bold mb-6">Popular Authors</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {mockAuthors.map((author) => (
-              <div key={author.id} className="flex items-center space-x-3 p-4 rounded-lg bg-card border">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                  <span className="text-lg font-semibold">
+            {authors.map((author, index) => (
+              <motion.div
+                key={author.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="flex items-center space-x-3 p-4 rounded-lg bg-card border hover:shadow-md transition-all duration-200 cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-primary">
                     {author.name.charAt(0)}
                   </span>
                 </div>
@@ -149,7 +180,7 @@ const Index = () => {
                   <p className="font-medium">{author.name}</p>
                   <p className="text-sm text-muted-foreground">📚 {author.books} books</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -171,18 +202,58 @@ const Index = () => {
             <p className="text-sm font-medium mb-4">Follow on Social Media</p>
             
             <div className="flex justify-center space-x-4">
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                <Facebook className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                <Instagram className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                <Linkedin className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
-                <span className="text-sm font-bold">T</span>
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={() => window.open('https://facebook.com', '_blank')}
+                >
+                  <Facebook className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={() => window.open('https://instagram.com', '_blank')}
+                >
+                  <Instagram className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={() => window.open('https://linkedin.com', '_blank')}
+                >
+                  <Linkedin className="h-5 w-5" />
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={() => window.open('https://tiktok.com', '_blank')}
+                >
+                  <span className="text-sm font-bold">T</span>
+                </Button>
+              </motion.div>
             </div>
           </div>
         </footer>
