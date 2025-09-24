@@ -8,7 +8,8 @@ import { CategoryGrid } from '../components/CategoryGrid';
 import { BookCard } from '../components/BookCard';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import api, { generateDummyBooks, generateDummyAuthors } from '../api/api';
+import { useBooks, useRecommendedBooks } from '../hooks/useBooks';
+import { generateDummyBooks, generateDummyAuthors } from '../api/api';
 import { useState } from 'react';
 
 // Mock data for development
@@ -66,30 +67,13 @@ const Index = () => {
   const [allBooks, setAllBooks] = useState(() => generateDummyBooks(50));
   const [authors] = useState(() => generateDummyAuthors(8));
 
-  // Fetch books from API with fallback to dummy data
-  const { data: books, isLoading } = useQuery({
-    queryKey: ['recommended-books', loadedBooks],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/api/books?limit=${loadedBooks}`);
-        const apiData = response.data?.data;
-        if (Array.isArray(apiData) && apiData.length > 0) {
-          return apiData;
-        }
-        // Fallback to dummy data
-        return allBooks.slice(0, loadedBooks);
-      } catch (error) {
-        // Generate more dummy data if needed
-        if (loadedBooks > allBooks.length) {
-          const newBooks = generateDummyBooks(loadedBooks - allBooks.length, allBooks.length);
-          const updatedBooks = [...allBooks, ...newBooks];
-          setAllBooks(updatedBooks);
-          return updatedBooks.slice(0, loadedBooks);
-        }
-        return allBooks.slice(0, loadedBooks);
-      }
-    },
-  });
+  // Fetch books and recommendations from API
+  const { data: booksResponse, isLoading: booksLoading } = useBooks({ page: 1, limit: loadedBooks });
+  const { data: recommendedResponse, isLoading: recommendedLoading } = useRecommendedBooks('rating');
+
+  // Fallback to dummy data if API fails
+  const books = booksResponse?.success ? booksResponse.data.books : allBooks.slice(0, loadedBooks);
+  const isLoading = booksLoading || recommendedLoading;
 
   const handleLoadMore = () => {
     const newCount = loadedBooks + 10;
@@ -102,8 +86,15 @@ const Index = () => {
     }
   };
 
-  // Extra safety check to ensure books is always an array
+  // Extra safety check to ensure books is always an array and handle load more
   const booksArray = Array.isArray(books) ? books : allBooks.slice(0, loadedBooks);
+  
+  // Generate more dummy data if needed for load more
+  if (loadedBooks > allBooks.length) {
+    const newBooks = generateDummyBooks(loadedBooks - allBooks.length, allBooks.length);
+    const updatedBooks = [...allBooks, ...newBooks];
+    setAllBooks(updatedBooks);
+  }
 
   return (
     <div className="min-h-screen bg-background">

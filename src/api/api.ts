@@ -7,7 +7,134 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
+
+// Auth API endpoints
+export const authAPI = {
+  login: async (credentials: { email: string; password: string }) => {
+    const response = await api.post('/api/auth/login', credentials);
+    return response.data;
+  },
+  register: async (userData: { name: string; email: string; password: string }) => {
+    const response = await api.post('/api/auth/register', userData);
+    return response.data;
+  },
+};
+
+// Books API endpoints
+export const booksAPI = {
+  getBooks: async (params?: { 
+    page?: number; 
+    limit?: number; 
+    category?: string; 
+    author?: string; 
+    search?: string; 
+  }) => {
+    const response = await api.get('/api/books', { params });
+    return response.data;
+  },
+  getBookById: async (id: string) => {
+    const response = await api.get(`/api/books/${id}`);
+    return response.data;
+  },
+  getRecommendedBooks: async (type: 'rating' | 'popular' = 'rating') => {
+    const response = await api.get('/api/books/recommend', { params: { type } });
+    return response.data;
+  },
+  createBook: async (bookData: any) => {
+    const response = await api.post('/api/books', bookData);
+    return response.data;
+  },
+  updateBook: async (id: string, bookData: any) => {
+    const response = await api.put(`/api/books/${id}`, bookData);
+    return response.data;
+  },
+  deleteBook: async (id: string) => {
+    const response = await api.delete(`/api/books/${id}`);
+    return response.data;
+  },
+};
+
+// Authors API endpoints
+export const authorsAPI = {
+  getAuthors: async () => {
+    const response = await api.get('/api/authors');
+    return response.data;
+  },
+  getAuthorBooks: async (id: string) => {
+    const response = await api.get(`/api/authors/${id}/books`);
+    return response.data;
+  },
+  createAuthor: async (authorData: any) => {
+    const response = await api.post('/api/authors', authorData);
+    return response.data;
+  },
+  updateAuthor: async (id: string, authorData: any) => {
+    const response = await api.put(`/api/authors/${id}`, authorData);
+    return response.data;
+  },
+  deleteAuthor: async (id: string) => {
+    const response = await api.delete(`/api/authors/${id}`);
+    return response.data;
+  },
+};
+
+// Categories API endpoints
+export const categoriesAPI = {
+  getCategories: async () => {
+    const response = await api.get('/api/categories');
+    return response.data;
+  },
+  createCategory: async (categoryData: any) => {
+    const response = await api.post('/api/categories', categoryData);
+    return response.data;
+  },
+  updateCategory: async (id: string, categoryData: any) => {
+    const response = await api.put(`/api/categories/${id}`, categoryData);
+    return response.data;
+  },
+  deleteCategory: async (id: string) => {
+    const response = await api.delete(`/api/categories/${id}`);
+    return response.data;
+  },
+};
+
+// Loans API endpoints
+export const loansAPI = {
+  borrowBook: async (bookId: string) => {
+    const response = await api.post('/api/loans', { bookId });
+    return response.data;
+  },
+  returnBook: async (loanId: string) => {
+    const response = await api.patch(`/api/loans/${loanId}/return`);
+    return response.data;
+  },
+  getMyLoans: async () => {
+    const response = await api.get('/api/loans/my');
+    return response.data;
+  },
+};
+
+// Admin API endpoints
+export const adminAPI = {
+  createLoan: async (loanData: any) => {
+    const response = await api.post('/api/admin/loans', loanData);
+    return response.data;
+  },
+  updateLoan: async (id: string, loanData: any) => {
+    const response = await api.patch(`/api/admin/loans/${id}`, loanData);
+    return response.data;
+  },
+  getOverdueLoans: async () => {
+    const response = await api.get('/api/admin/loans/overdue');
+    return response.data;
+  },
+  getOverview: async () => {
+    const response = await api.get('/api/admin/overview');
+    return response.data;
+  },
+};
 
 // Request interceptor to add auth token
 api.interceptors.request.use(

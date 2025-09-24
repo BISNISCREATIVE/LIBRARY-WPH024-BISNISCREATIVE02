@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { setCredentials, logout, setLoading } from '../store/features/authSlice';
 import { RootState } from '../store/store';
-import api from '../api/api';
+import { authAPI } from '../api/api';
+import { toast } from '../hooks/use-toast';
 
 interface LoginData {
   email: string;
@@ -20,34 +21,56 @@ export const useAuth = () => {
   const { token, user, isAuthenticated, loading } = useSelector((state: RootState) => state.auth);
 
   const loginMutation = useMutation({
-    mutationFn: async (data: LoginData) => {
-      const response = await api.post('/api/auth/login', data);
-      return response.data;
-    },
+    mutationFn: authAPI.login,
     onSuccess: (data) => {
-      dispatch(setCredentials({
-        token: data.token,
-        user: data.user
-      }));
+      if (data.success) {
+        dispatch(setCredentials({
+          token: data.data.token,
+          user: data.data.user
+        }));
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${data.data.user.name}!`,
+        });
+      } else {
+        throw new Error(data.message || 'Login failed');
+      }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Login failed:', error);
+      const message = error?.response?.data?.message || error.message || 'Login failed';
+      toast({
+        title: "Login Failed",
+        description: message,
+        variant: "destructive",
+      });
     },
   });
 
   const registerMutation = useMutation({
-    mutationFn: async (data: RegisterData) => {
-      const response = await api.post('/api/auth/register', data);
-      return response.data;
-    },
+    mutationFn: authAPI.register,
     onSuccess: (data) => {
-      dispatch(setCredentials({
-        token: data.token,
-        user: data.user
-      }));
+      if (data.success) {
+        dispatch(setCredentials({
+          token: data.data.token,
+          user: data.data.user
+        }));
+        toast({
+          title: "Registration Successful",
+          description: `Welcome, ${data.data.user.name}!`,
+        });
+      } else {
+        throw new Error(data.message || 'Registration failed');
+      }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Registration failed:', error);
+      const message = error?.response?.data?.message || error.message || 'Registration failed';
+      toast({
+        title: "Registration Failed",
+        description: message,
+        variant: "destructive",
+      });
     },
   });
 
