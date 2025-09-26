@@ -11,8 +11,8 @@ import { toast } from 'sonner';
 interface Book {
   id: string;
   title: string;
-  author: string;
-  category: string;
+  author: string | { id: string; name: string; bio?: string; createdAt?: string; updatedAt?: string };
+  category: string | { id: string; name: string; createdAt?: string; updatedAt?: string };
   cover_image: string;
   rating?: number;
   stock: number;
@@ -31,7 +31,13 @@ export const BookCard = ({ book, showAddToCart = true }: BookCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (book.stock > 0) {
-      dispatch(addToCart(book));
+      // Normalize book data for cart
+      const normalizedBook = {
+        ...book,
+        author: typeof book.author === 'string' ? book.author : book.author?.name || 'Unknown Author',
+        category: typeof book.category === 'string' ? book.category : book.category?.name || 'Unknown Category'
+      };
+      dispatch(addToCart(normalizedBook));
       toast.success(`"${book.title}" added to cart`);
     } else {
       toast.error('Book is out of stock');
@@ -95,7 +101,7 @@ export const BookCard = ({ book, showAddToCart = true }: BookCardProps) => {
               {book.title}
             </h3>
             <p className="text-muted-foreground text-xs mb-2">
-              {book.author}
+              {typeof book.author === 'string' ? book.author : book.author?.name || 'Unknown Author'}
             </p>
             
             <div className="flex items-center justify-between">
@@ -107,7 +113,7 @@ export const BookCard = ({ book, showAddToCart = true }: BookCardProps) => {
               </div>
               
               <Badge variant="secondary" className="text-xs">
-                {book.category}
+                {typeof book.category === 'string' ? book.category : book.category?.name || 'Unknown Category'}
               </Badge>
             </div>
             
