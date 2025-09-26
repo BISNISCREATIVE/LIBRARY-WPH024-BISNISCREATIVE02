@@ -290,9 +290,13 @@ export const BookDetailPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Badge variant="secondary" className="mb-2">{book.category}</Badge>
+              <Badge variant="secondary" className="mb-2">
+                {typeof book.category === 'string' ? book.category : book.category?.name || 'Unknown Category'}
+              </Badge>
               <h1 className="text-4xl font-bold mb-2">{book.title}</h1>
-              <p className="text-xl text-muted-foreground mb-6">{book.author}</p>
+              <p className="text-xl text-muted-foreground mb-6">
+                {typeof book.author === 'string' ? book.author : book.author?.name || 'Unknown Author'}
+              </p>
               
               <div className="flex items-center space-x-1 mb-6">
                 <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />

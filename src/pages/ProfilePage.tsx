@@ -305,7 +305,9 @@ export const ProfilePage = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <h3 className="font-semibold">{loan.book.title}</h3>
-                            <p className="text-muted-foreground text-sm">{loan.book.author}</p>
+                            <p className="text-muted-foreground text-sm">
+                              {typeof loan.book.author === 'string' ? loan.book.author : loan.book.author?.name || 'Unknown Author'}
+                            </p>
                           </div>
                           <Badge variant={loan.status === 'BORROWED' ? 'default' : 'secondary'}>
                             {loan.status}

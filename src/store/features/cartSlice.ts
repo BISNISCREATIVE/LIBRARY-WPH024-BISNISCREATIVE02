@@ -6,6 +6,7 @@ interface Book {
   author: string;
   cover_image: string;
   stock: number;
+  category?: string;
 }
 
 interface CartState {
