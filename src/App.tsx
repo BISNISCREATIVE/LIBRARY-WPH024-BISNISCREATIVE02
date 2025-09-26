@@ -13,6 +13,8 @@ import { BooksPage } from "./pages/BooksPage";
 import { BookDetailPage } from "./pages/BookDetailPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { MyLoansPage } from "./pages/MyLoansPage";
+import { CategoryPage } from "./pages/CategoryPage";
+import { AuthorPage } from "./pages/AuthorPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -39,6 +41,8 @@ const App = () => (
             <Route path="/books/:id" element={<BookDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-loans" element={<MyLoansPage />} />
+            <Route path="/category/:categoryId" element={<CategoryPage />} />
+            <Route path="/author/:authorId" element={<AuthorPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

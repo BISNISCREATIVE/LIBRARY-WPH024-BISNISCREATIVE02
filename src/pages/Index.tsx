@@ -37,7 +37,7 @@ const mockBooks = [
     title: 'Oliver Twist',
     author: 'Charles Dickens',
     category: 'Classic',
-    cover_image: '/placeholder-book.png',
+    cover_image: '/src/assets/book-oliver-twist-cover.jpg',
     rating: 4.9,
     stock: 7,
   },
@@ -46,16 +46,16 @@ const mockBooks = [
     title: 'White Fang',
     author: 'Jack London',
     category: 'Adventure',
-    cover_image: '/placeholder-book.png',
+    cover_image: '/src/assets/book-white-fang-cover.jpg',
     rating: 4.9,
     stock: 2,
   },
   {
     id: '5',
-    title: 'The Scarred Woman',
-    author: 'Jussi Adler-Olsen',
-    category: 'Thriller',
-    cover_image: '/placeholder-book.png',
+    title: 'The Psychology of Money',
+    author: 'Morgan Housel',
+    category: 'Business',
+    cover_image: '/src/assets/book-psychology-money-cover.jpg',
     rating: 4.9,
     stock: 4,
   },
@@ -178,7 +178,7 @@ const Index = () => {
 
       </main>
       <Footer />
-      </main>
+      <CartSidebar />
     </div>
   );
 };
