@@ -107,18 +107,22 @@ export const ProfilePage = () => {
   });
 
   // Fetch borrowed books
-  const { data: borrowedBooks = mockBorrowedBooks } = useQuery({
+  const { data: borrowedBooksData = mockBorrowedBooks } = useQuery({
     queryKey: ['user-borrowed-books'],
     queryFn: async () => {
       try {
         const response = await api.get('/api/loans/my');
-        return response.data.data || mockBorrowedBooks;
+        const data = response.data.data || response.data || mockBorrowedBooks;
+        return Array.isArray(data) ? data : mockBorrowedBooks;
       } catch (error) {
         return mockBorrowedBooks;
       }
     },
     enabled: isAuthenticated,
   });
+
+  // Ensure borrowedBooks is always an array
+  const borrowedBooks = Array.isArray(borrowedBooksData) ? borrowedBooksData : mockBorrowedBooks;
 
   // Fetch user reviews
   const { data: userReviews = mockUserReviews } = useQuery({
