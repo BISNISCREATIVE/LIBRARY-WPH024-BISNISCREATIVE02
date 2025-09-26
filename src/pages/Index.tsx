@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CartSidebar } from '../components/CartSidebar';
 import { HeroSection } from '../components/HeroSection';
 import { CategoryGrid } from '../components/CategoryGrid';
+import { Footer } from '../components/Footer';
 import { BookCard } from '../components/BookCard';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -97,11 +97,11 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <CartSidebar />
       
-      <main>
+      <main className="flex-1">
         <HeroSection />
         <CategoryGrid />
 
@@ -176,78 +176,8 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-primary text-primary-foreground py-8">
-          <div className="container mx-auto px-4 text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="h-8 w-8 rounded-full bg-primary-foreground text-primary flex items-center justify-center">
-                <span className="font-bold text-sm">B</span>
-              </div>
-              <span className="font-bold text-xl">Booky</span>
-            </div>
-            <p className="text-sm opacity-90 mb-4 max-w-md mx-auto">
-              Discover inspiring stories & timeless knowledge, ready to borrow anytime. 
-              Explore online or visit our nearest library branch.
-            </p>
-            
-            <p className="text-sm font-medium mb-4">Follow on Social Media</p>
-            
-            <div className="flex justify-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => window.open('https://facebook.com', '_blank')}
-                >
-                  <Facebook className="h-5 w-5" />
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => window.open('https://instagram.com', '_blank')}
-                >
-                  <Instagram className="h-5 w-5" />
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => window.open('https://linkedin.com', '_blank')}
-                >
-                  <Linkedin className="h-5 w-5" />
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => window.open('https://tiktok.com', '_blank')}
-                >
-                  <span className="text-sm font-bold">T</span>
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-        </footer>
+      </main>
+      <Footer />
       </main>
     </div>
   );
