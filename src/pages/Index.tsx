@@ -76,12 +76,12 @@ const Index = () => {
   const isLoading = booksLoading || recommendedLoading;
 
   const handleLoadMore = () => {
-    const newCount = loadedBooks + 10;
+    const newCount = loadedBooks + 20; // Load more books at once
     setLoadedBooks(newCount);
     
-    // Generate more dummy data if needed
+    // Generate unlimited dummy data
     if (newCount > allBooks.length) {
-      const additionalBooks = generateDummyBooks(20, allBooks.length);
+      const additionalBooks = generateDummyBooks(50, allBooks.length); // Generate more books
       setAllBooks(prev => [...prev, ...additionalBooks]);
     }
   };

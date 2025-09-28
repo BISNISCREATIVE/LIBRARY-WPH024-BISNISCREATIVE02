@@ -1,18 +1,28 @@
 import { motion } from 'framer-motion';
-import heroImage from '../assets/hero-image.jpg';
+import heroBg from '../assets/hero-bg.png';
+import heroLeft from '../assets/hero-left.png';
+import heroRight from '../assets/hero-right.png';
 
 export const HeroSection = () => {
   return (
     <section className="relative overflow-hidden rounded-2xl mx-4 md:mx-8 mt-6">
       <div 
-        className="relative h-64 md:h-80 bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center"
+        className="relative h-64 md:h-80 bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center"
         style={{
-          backgroundImage: `url(${heroImage})`,
+          backgroundImage: `url(${heroBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 bg-blue-600/20" />
+        <div className="absolute inset-0 bg-blue-600/10" />
+        
+        {/* Hero Characters */}
+        <div className="absolute left-8 bottom-0 z-10">
+          <img src={heroLeft} alt="Reading child" className="h-32 md:h-40" />
+        </div>
+        <div className="absolute right-8 bottom-0 z-10">
+          <img src={heroRight} alt="Happy child with book" className="h-32 md:h-40" />
+        </div>
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}

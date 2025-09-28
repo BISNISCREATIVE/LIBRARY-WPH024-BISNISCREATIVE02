@@ -42,9 +42,7 @@ export const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">B</span>
-            </div>
+            <img src="/src/assets/logo.png" alt="Booky" className="h-8 w-8" />
             <span className="font-bold text-xl text-primary">Booky</span>
           </Link>
 

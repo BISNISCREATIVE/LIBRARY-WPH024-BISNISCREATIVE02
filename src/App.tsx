@@ -15,6 +15,9 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { MyLoansPage } from "./pages/MyLoansPage";
 import { CategoryPage } from "./pages/CategoryPage";
 import { AuthorPage } from "./pages/AuthorPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminBooks from "./pages/admin/AdminBooks";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/my-loans" element={<MyLoansPage />} />
             <Route path="/category/:categoryId" element={<CategoryPage />} />
             <Route path="/author/:authorId" element={<AuthorPage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/books" element={<AdminBooks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
